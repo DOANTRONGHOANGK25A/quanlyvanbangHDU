@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Form, Input, Select, Button, Space, Upload, Typography, Divider, Row, Col, message } from "antd";
+import { Card, Form, Input, InputNumber, Select, Button, Space, Upload, Typography, Divider, Row, Col, message } from "antd";
 import { InboxOutlined, PlusCircleOutlined, SaveOutlined, CloseOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import "../styles/pages.css";
@@ -135,6 +135,41 @@ export function DiplomaCreatePage() {
                             </Form.Item>
                         </Col>
                     </Row>
+
+                    <Row gutter={24}>
+                        <Col xs={24} md={6}>
+                            <Form.Item
+                                label="GPA"
+                                name="gpa"
+                            >
+                                <InputNumber
+                                    placeholder="Ví dụ: 3.25"
+                                    min={0}
+                                    max={4}
+                                    precision={2}
+                                    style={{ width: "100%" }}
+                                />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+
+                    <Form.Item label="Bảng điểm (ảnh/PDF)" name="transcript">
+                        <Dragger
+                            accept=".pdf,image/*"
+                            maxCount={1}
+                            className="upload-dragger"
+                        >
+                            <p className="ant-upload-drag-icon">
+                                <InboxOutlined style={{ color: "#1890ff" }} />
+                            </p>
+                            <p className="ant-upload-text">
+                                Kéo thả hoặc bấm để chọn file
+                            </p>
+                            <p className="ant-upload-hint">
+                                Chấp nhận PDF/JPG/PNG.
+                            </p>
+                        </Dragger>
+                    </Form.Item>
 
                     <Form.Item label="Ghi chú" name="notes">
                         <TextArea rows={3} placeholder="Ghi chú thêm (nếu có)" />
