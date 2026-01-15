@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Card, Table, Tag, Button, Space, Input, Modal, Typography, Row, Col, Statistic, Tooltip } from "antd";
+import { Card, Table, Tag, Button, Space, Input, Modal, Typography, Row, Col, Statistic, Tooltip, Avatar } from "antd";
 import {
     FileTextOutlined,
     SearchOutlined,
@@ -8,6 +8,7 @@ import {
     ClockCircleOutlined,
     CloseCircleOutlined,
     ExclamationCircleOutlined,
+    UserOutlined,
 } from "@ant-design/icons";
 import { mockDiplomas, STATUS } from "../mock/mockData";
 import "../styles/pages.css";
@@ -39,16 +40,32 @@ export function DiplomaListPage() {
                     <span>Chi tiết hồ sơ văn bằng</span>
                 </Space>
             ),
-            width: 500,
+            width: 560,
             content: (
                 <div className="modal-detail-content">
+                    <div className="detail-header-with-photo">
+                        <Avatar
+                            size={100}
+                            src={record.photo}
+                            icon={<UserOutlined />}
+                            className="detail-photo"
+                        />
+                        <div className="detail-header-info">
+                            <Title level={4} style={{ margin: 0 }}>{record.studentName}</Title>
+                            <Text type="secondary">Mã SV: {record.studentId}</Text>
+                            <div style={{ marginTop: 8 }}>
+                                <Tag color={getStatusColor(record.status)}>{record.status}</Tag>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="detail-divider" />
                     <div className="detail-item">
-                        <Text type="secondary">Số hiệu:</Text>
+                        <Text type="secondary">Số hiệu văn bằng:</Text>
                         <Text strong>{record.serialNo}</Text>
                     </div>
                     <div className="detail-item">
-                        <Text type="secondary">Sinh viên:</Text>
-                        <Text strong>{record.studentName}</Text>
+                        <Text type="secondary">Ngày sinh:</Text>
+                        <Text>{record.birthDate}</Text>
                     </div>
                     <div className="detail-item">
                         <Text type="secondary">Ngành:</Text>
@@ -59,12 +76,16 @@ export function DiplomaListPage() {
                         <Text>{record.ranking}</Text>
                     </div>
                     <div className="detail-item">
-                        <Text type="secondary">Trạng thái:</Text>
-                        <Tag color={getStatusColor(record.status)}>{record.status}</Tag>
+                        <Text type="secondary">GPA:</Text>
+                        <Text>{record.gpa}</Text>
+                    </div>
+                    <div className="detail-item">
+                        <Text type="secondary">Năm tốt nghiệp:</Text>
+                        <Text>{record.graduationYear}</Text>
                     </div>
                     <div className="detail-item">
                         <Text type="secondary">TxID:</Text>
-                        <Text code>{record.txId || "(Chưa phát hành)"}</Text>
+                        <Text code style={{ fontSize: 12 }}>{record.txId || "(Chưa phát hành)"}</Text>
                     </div>
                 </div>
             ),

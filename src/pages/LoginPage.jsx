@@ -1,7 +1,8 @@
 import React from "react";
-import { Form, Input, Button, Card, Checkbox, Typography, Space, message } from "antd";
+import { Form, Input, Button, Card, Checkbox, Typography, Space, message, Table, Tag } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import { mockUsers } from "../mock/mockData";
 import "../styles/login.css";
 
 const { Title, Text } = Typography;
@@ -14,6 +15,48 @@ export function LoginPage() {
         message.success("Đăng nhập thành công!");
         navigate("/verify");
     };
+
+    const getRoleTag = (role) => {
+        switch (role) {
+            case "ADMIN":
+                return <Tag color="red">Quản trị viên</Tag>;
+            case "PRINCIPAL":
+                return <Tag color="gold">Hiệu trưởng</Tag>;
+            case "ACADEMIC_AFFAIRS":
+                return <Tag color="blue">Phòng Đào tạo</Tag>;
+            case "STAFF":
+                return <Tag color="green">Nhân viên</Tag>;
+            default:
+                return <Tag>{role}</Tag>;
+        }
+    };
+
+    const accountColumns = [
+        {
+            title: "Tài khoản",
+            dataIndex: "username",
+            key: "username",
+            render: (text) => <Text code copyable>{text}</Text>,
+        },
+        {
+            title: "Mật khẩu",
+            dataIndex: "password",
+            key: "password",
+            render: (text) => <Text code copyable>{text}</Text>,
+        },
+        {
+            title: "Vai trò",
+            dataIndex: "role",
+            key: "role",
+            render: (role) => getRoleTag(role),
+        },
+        {
+            title: "Mô tả",
+            dataIndex: "description",
+            key: "description",
+            ellipsis: true,
+        },
+    ];
 
     return (
         <div className="login-container">
@@ -81,12 +124,16 @@ export function LoginPage() {
                             </Button>
                         </Form.Item>
                     </Form>
+                </Card>
 
-                    <div className="login-footer">
-                        <Text type="secondary">
-                            Demo Mode - Nhấn đăng nhập để tiếp tục
-                        </Text>
-                    </div>
+                <Card className="demo-accounts-card" title="Tài khoản demo">
+                    <Table
+                        dataSource={mockUsers}
+                        columns={accountColumns}
+                        rowKey="id"
+                        pagination={false}
+                        size="small"
+                    />
                 </Card>
 
                 <div className="login-info">

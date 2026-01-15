@@ -1,10 +1,11 @@
 import React from "react";
-import { Card, Table, Button, Space, Tag, Typography, Divider, Empty, Popconfirm, message, Tooltip } from "antd";
+import { Card, Table, Button, Space, Tag, Typography, Divider, Empty, Popconfirm, message, Tooltip, Modal, Avatar } from "antd";
 import {
     CheckCircleOutlined,
     CloseCircleOutlined,
     ClockCircleOutlined,
     EyeOutlined,
+    UserOutlined,
 } from "@ant-design/icons";
 import { mockDiplomas, STATUS } from "../mock/mockData";
 import "../styles/pages.css";
@@ -15,11 +16,72 @@ export function ApprovalPage() {
     const data = mockDiplomas.filter((d) => d.status === STATUS.PENDING);
 
     const handleApprove = (record) => {
-        message.success(`Đã duyệt hồ sơ ${record.serialNo} (Demo)`);
+        message.success(`Đã duyệt hồ sơ ${record.serialNo}`);
     };
 
     const handleReject = (record) => {
-        message.error(`Đã từ chối hồ sơ ${record.serialNo} (Demo)`);
+        message.error(`Đã từ chối hồ sơ ${record.serialNo}`);
+    };
+
+    const openDetail = (record) => {
+        Modal.info({
+            title: (
+                <Space>
+                    <ClockCircleOutlined />
+                    <span>Chi tiết hồ sơ chờ duyệt</span>
+                </Space>
+            ),
+            width: 560,
+            content: (
+                <div className="modal-detail-content">
+                    <div className="detail-header-with-photo">
+                        <Avatar
+                            size={100}
+                            src={record.photo}
+                            icon={<UserOutlined />}
+                            className="detail-photo"
+                        />
+                        <div className="detail-header-info">
+                            <Title level={4} style={{ margin: 0 }}>{record.studentName}</Title>
+                            <Text type="secondary">Mã SV: {record.studentId}</Text>
+                            <div style={{ marginTop: 8 }}>
+                                <Tag icon={<ClockCircleOutlined />} color="warning">Chờ duyệt</Tag>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="detail-divider" />
+                    <div className="detail-item">
+                        <Text type="secondary">Số hiệu văn bằng:</Text>
+                        <Text strong>{record.serialNo}</Text>
+                    </div>
+                    <div className="detail-item">
+                        <Text type="secondary">Ngày sinh:</Text>
+                        <Text>{record.birthDate}</Text>
+                    </div>
+                    <div className="detail-item">
+                        <Text type="secondary">Ngành:</Text>
+                        <Text>{record.major}</Text>
+                    </div>
+                    <div className="detail-item">
+                        <Text type="secondary">Xếp loại:</Text>
+                        <Text>{record.ranking}</Text>
+                    </div>
+                    <div className="detail-item">
+                        <Text type="secondary">GPA:</Text>
+                        <Text>{record.gpa}</Text>
+                    </div>
+                    <div className="detail-item">
+                        <Text type="secondary">Năm tốt nghiệp:</Text>
+                        <Text>{record.graduationYear}</Text>
+                    </div>
+                    <div className="detail-item">
+                        <Text type="secondary">Ngày tạo hồ sơ:</Text>
+                        <Text>{record.date}</Text>
+                    </div>
+                </div>
+            ),
+            okText: "Đóng",
+        });
     };
 
     const columns = [
@@ -57,7 +119,7 @@ export function ApprovalPage() {
             render: (_, record) => (
                 <Space>
                     <Tooltip title="Xem chi tiết">
-                        <Button type="text" icon={<EyeOutlined />} />
+                        <Button type="text" icon={<EyeOutlined />} onClick={() => openDetail(record)} />
                     </Tooltip>
                     <Popconfirm
                         title="Xác nhận duyệt"

@@ -1,22 +1,143 @@
 import React, { useState } from "react";
-import { Card, Input, Result, Typography, Space, Divider, Empty, Spin } from "antd";
-import { SearchOutlined, SafetyCertificateOutlined } from "@ant-design/icons";
+import { Card, Input, Typography, Space, Divider, Empty, Spin, Tag, Avatar } from "antd";
+import { SearchOutlined, SafetyCertificateOutlined, CheckCircleOutlined, CloseCircleOutlined, UserOutlined } from "@ant-design/icons";
+import { mockDiplomas, STATUS } from "../mock/mockData";
 import "../styles/pages.css";
 
 const { Title, Text, Paragraph } = Typography;
 
 export function VerifyPage() {
     const [loading, setLoading] = useState(false);
-    const [searched, setSearched] = useState(false);
+    const [searchResult, setSearchResult] = useState(null);
 
     const handleSearch = (value) => {
         if (!value) return;
         setLoading(true);
-        // Simulate API call
+        // Tìm trong dữ liệu mock
         setTimeout(() => {
+            const found = mockDiplomas.find(
+                (d) => d.serialNo.toLowerCase() === value.toLowerCase() ||
+                    d.studentId === value
+            );
+            setSearchResult(found || "not_found");
             setLoading(false);
-            setSearched(true);
-        }, 1000);
+        }, 800);
+    };
+
+    const getStatusInfo = (status) => {
+        switch (status) {
+            case STATUS.ISSUED:
+                return { color: "success", text: "Hợp lệ - Đã phát hành", icon: <CheckCircleOutlined /> };
+            case STATUS.REVOKED:
+                return { color: "error", text: "Đã thu hồi", icon: <CloseCircleOutlined /> };
+            default:
+                return { color: "warning", text: "Chưa phát hành", icon: null };
+        }
+    };
+
+    const renderResult = () => {
+        if (loading) {
+            return (
+                <Card className="result-card">
+                    <div className="loading-wrapper">
+                        <Spin size="large" />
+                        <Text type="secondary" style={{ marginTop: 16 }}>
+                            Đang tra cứu thông tin...
+                        </Text>
+                    </div>
+                </Card>
+            );
+        }
+
+        if (!searchResult) {
+            return (
+                <Card className="result-card">
+                    <Empty
+                        image={Empty.PRESENTED_IMAGE_SIMPLE}
+                        description={
+                            <Text type="secondary">
+                                Nhập số hiệu văn bằng để bắt đầu tra cứu
+                            </Text>
+                        }
+                    />
+                </Card>
+            );
+        }
+
+        if (searchResult === "not_found") {
+            return (
+                <Card className="result-card result-not-found">
+                    <div className="verify-result-header">
+                        <CloseCircleOutlined style={{ fontSize: 48, color: "#ff4d4f" }} />
+                        <Title level={4} style={{ margin: "16px 0 8px" }}>Không tìm thấy văn bằng</Title>
+                        <Text type="secondary">
+                            Số hiệu văn bằng không tồn tại trong hệ thống hoặc chưa được phát hành.
+                        </Text>
+                    </div>
+                </Card>
+            );
+        }
+
+        const statusInfo = getStatusInfo(searchResult.status);
+        const isValid = searchResult.status === STATUS.ISSUED;
+
+        return (
+            <Card className={`result-card ${isValid ? "result-valid" : "result-invalid"}`}>
+                <div className="verify-result-header">
+                    <SafetyCertificateOutlined style={{ fontSize: 48, color: isValid ? "#52c41a" : "#ff4d4f" }} />
+                    <Title level={4} style={{ margin: "16px 0 8px" }}>
+                        {isValid ? "Văn bằng hợp lệ" : "Văn bằng không hợp lệ"}
+                    </Title>
+                    <Tag icon={statusInfo.icon} color={statusInfo.color} style={{ fontSize: 14, padding: "4px 12px" }}>
+                        {statusInfo.text}
+                    </Tag>
+                </div>
+
+                <Divider />
+
+                <div className="verify-detail-content">
+                    <div className="detail-header-with-photo">
+                        <Avatar
+                            size={100}
+                            src={searchResult.photo}
+                            icon={<UserOutlined />}
+                            className="detail-photo"
+                        />
+                        <div className="detail-header-info">
+                            <Title level={4} style={{ margin: 0 }}>{searchResult.studentName}</Title>
+                            <Text type="secondary">Mã SV: {searchResult.studentId}</Text>
+                        </div>
+                    </div>
+                    <div className="detail-divider" />
+                    <div className="detail-item">
+                        <Text type="secondary">Số hiệu văn bằng:</Text>
+                        <Text strong>{searchResult.serialNo}</Text>
+                    </div>
+                    <div className="detail-item">
+                        <Text type="secondary">Ngày sinh:</Text>
+                        <Text>{searchResult.birthDate}</Text>
+                    </div>
+                    <div className="detail-item">
+                        <Text type="secondary">Ngành:</Text>
+                        <Text>{searchResult.major}</Text>
+                    </div>
+                    <div className="detail-item">
+                        <Text type="secondary">Xếp loại:</Text>
+                        <Text>{searchResult.ranking}</Text>
+                    </div>
+                    <div className="detail-item">
+                        <Text type="secondary">Năm tốt nghiệp:</Text>
+                        <Text>{searchResult.graduationYear}</Text>
+                    </div>
+                    {searchResult.txId && (
+                        <div className="detail-item">
+                            <Text type="secondary">TxID Blockchain:</Text>
+                            <Text code copyable style={{ fontSize: 11 }}>{searchResult.txId}</Text>
+                        </div>
+                    )}
+                </div>
+            </Card>
+        );
     };
 
     return (
@@ -59,35 +180,7 @@ export function VerifyPage() {
             </Card>
 
             <div style={{ marginTop: 24 }}>
-                {loading ? (
-                    <Card className="result-card">
-                        <div className="loading-wrapper">
-                            <Spin size="large" />
-                            <Text type="secondary" style={{ marginTop: 16 }}>
-                                Đang tra cứu thông tin...
-                            </Text>
-                        </div>
-                    </Card>
-                ) : searched ? (
-                    <Card className="result-card">
-                        <Result
-                            icon={<SafetyCertificateOutlined style={{ color: "#52c41a" }} />}
-                            title="Kết quả tra cứu"
-                            subTitle="Đây là giao diện demo. Kết quả thực tế sẽ hiển thị thông tin văn bằng từ blockchain."
-                        />
-                    </Card>
-                ) : (
-                    <Card className="result-card">
-                        <Empty
-                            image={Empty.PRESENTED_IMAGE_SIMPLE}
-                            description={
-                                <Text type="secondary">
-                                    Nhập số hiệu văn bằng để bắt đầu tra cứu
-                                </Text>
-                            }
-                        />
-                    </Card>
-                )}
+                {renderResult()}
             </div>
         </div>
     );

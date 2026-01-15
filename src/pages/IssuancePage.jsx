@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Tabs, Table, Button, Tag, Typography, Divider, Space, Popconfirm, message, Tooltip, Empty } from "antd";
+import { Card, Tabs, Table, Button, Tag, Typography, Divider, Space, Popconfirm, message, Tooltip, Empty, Modal, Avatar } from "antd";
 import {
     SendOutlined,
     CheckCircleOutlined,
@@ -7,6 +7,7 @@ import {
     RocketOutlined,
     StopOutlined,
     EyeOutlined,
+    UserOutlined,
 } from "@ant-design/icons";
 import { mockDiplomas, STATUS } from "../mock/mockData";
 import "../styles/pages.css";
@@ -19,11 +20,88 @@ export function IssuancePage() {
     const revoked = mockDiplomas.filter((d) => d.status === STATUS.REVOKED);
 
     const handleIssue = (record) => {
-        message.success(`Đã phát hành văn bằng ${record.serialNo} lên blockchain (Demo)`);
+        message.success(`Đã phát hành văn bằng ${record.serialNo} lên blockchain`);
     };
 
     const handleRevoke = (record) => {
-        message.warning(`Đã thu hồi văn bằng ${record.serialNo} (Demo)`);
+        message.warning(`Đã thu hồi văn bằng ${record.serialNo}`);
+    };
+
+    const getStatusInfo = (status) => {
+        switch (status) {
+            case STATUS.APPROVED:
+                return { color: "processing", text: "Đã duyệt", icon: <CheckCircleOutlined /> };
+            case STATUS.ISSUED:
+                return { color: "success", text: "Đã phát hành", icon: <RocketOutlined /> };
+            case STATUS.REVOKED:
+                return { color: "error", text: "Đã thu hồi", icon: <CloseCircleOutlined /> };
+            default:
+                return { color: "default", text: status, icon: null };
+        }
+    };
+
+    const openDetail = (record) => {
+        const statusInfo = getStatusInfo(record.status);
+        Modal.info({
+            title: (
+                <Space>
+                    <SendOutlined />
+                    <span>Chi tiết văn bằng</span>
+                </Space>
+            ),
+            width: 560,
+            content: (
+                <div className="modal-detail-content">
+                    <div className="detail-header-with-photo">
+                        <Avatar
+                            size={100}
+                            src={record.photo}
+                            icon={<UserOutlined />}
+                            className="detail-photo"
+                        />
+                        <div className="detail-header-info">
+                            <Title level={4} style={{ margin: 0 }}>{record.studentName}</Title>
+                            <Text type="secondary">Mã SV: {record.studentId}</Text>
+                            <div style={{ marginTop: 8 }}>
+                                <Tag icon={statusInfo.icon} color={statusInfo.color}>{statusInfo.text}</Tag>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="detail-divider" />
+                    <div className="detail-item">
+                        <Text type="secondary">Số hiệu văn bằng:</Text>
+                        <Text strong>{record.serialNo}</Text>
+                    </div>
+                    <div className="detail-item">
+                        <Text type="secondary">Ngày sinh:</Text>
+                        <Text>{record.birthDate}</Text>
+                    </div>
+                    <div className="detail-item">
+                        <Text type="secondary">Ngành:</Text>
+                        <Text>{record.major}</Text>
+                    </div>
+                    <div className="detail-item">
+                        <Text type="secondary">Xếp loại:</Text>
+                        <Text>{record.ranking}</Text>
+                    </div>
+                    <div className="detail-item">
+                        <Text type="secondary">GPA:</Text>
+                        <Text>{record.gpa}</Text>
+                    </div>
+                    <div className="detail-item">
+                        <Text type="secondary">Năm tốt nghiệp:</Text>
+                        <Text>{record.graduationYear}</Text>
+                    </div>
+                    {record.txId && (
+                        <div className="detail-item">
+                            <Text type="secondary">TxID:</Text>
+                            <Text code copyable style={{ fontSize: 11 }}>{record.txId}</Text>
+                        </div>
+                    )}
+                </div>
+            ),
+            okText: "Đóng",
+        });
     };
 
     const columnsReady = [
@@ -50,7 +128,7 @@ export function IssuancePage() {
             render: (_, record) => (
                 <Space>
                     <Tooltip title="Xem chi tiết">
-                        <Button type="text" icon={<EyeOutlined />} />
+                        <Button type="text" icon={<EyeOutlined />} onClick={() => openDetail(record)} />
                     </Tooltip>
                     <Popconfirm
                         title="Xác nhận phát hành"
@@ -102,7 +180,7 @@ export function IssuancePage() {
             render: (_, record) => (
                 <Space>
                     <Tooltip title="Xem chi tiết">
-                        <Button type="text" icon={<EyeOutlined />} />
+                        <Button type="text" icon={<EyeOutlined />} onClick={() => openDetail(record)} />
                     </Tooltip>
                     <Popconfirm
                         title="Xác nhận thu hồi"
@@ -152,9 +230,9 @@ export function IssuancePage() {
             title: "Hành động",
             width: 100,
             align: "center",
-            render: () => (
+            render: (_, record) => (
                 <Tooltip title="Xem chi tiết">
-                    <Button type="text" icon={<EyeOutlined />} />
+                    <Button type="text" icon={<EyeOutlined />} onClick={() => openDetail(record)} />
                 </Tooltip>
             ),
         },

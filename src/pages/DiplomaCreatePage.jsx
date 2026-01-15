@@ -1,6 +1,6 @@
-import React from "react";
-import { Card, Form, Input, InputNumber, Select, Button, Space, Upload, Typography, Divider, Row, Col, message } from "antd";
-import { InboxOutlined, PlusCircleOutlined, SaveOutlined, CloseOutlined } from "@ant-design/icons";
+import React, { useState } from "react";
+import { Card, Form, Input, InputNumber, Select, Button, Space, Upload, Typography, Divider, Row, Col, message, Avatar } from "antd";
+import { InboxOutlined, PlusCircleOutlined, SaveOutlined, CloseOutlined, UserOutlined, CameraOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import "../styles/pages.css";
 
@@ -11,11 +11,27 @@ const { TextArea } = Input;
 export function DiplomaCreatePage() {
     const navigate = useNavigate();
     const [form] = Form.useForm();
+    const [photoPreview, setPhotoPreview] = useState(null);
+
+    const handlePhotoChange = (info) => {
+        if (info.file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setPhotoPreview(e.target.result);
+            };
+            if (info.file.originFileObj) {
+                reader.readAsDataURL(info.file.originFileObj);
+            } else if (info.file instanceof File) {
+                reader.readAsDataURL(info.file);
+            }
+        }
+    };
 
     const handleSubmit = (values) => {
         console.log("Form values:", values);
-        message.success("Hồ sơ đã được tạo thành công! (Demo)");
+        message.success("Hồ sơ đã được tạo thành công!");
         form.resetFields();
+        setPhotoPreview(null);
     };
 
     const handleCancel = () => {
@@ -45,6 +61,48 @@ export function DiplomaCreatePage() {
                     onFinish={handleSubmit}
                     size="large"
                 >
+                    {/* Phần upload ảnh chân dung */}
+                    <div className="photo-upload-section">
+                        <div className="photo-preview-container">
+                            {photoPreview ? (
+                                <Avatar
+                                    size={140}
+                                    src={photoPreview}
+                                    className="student-photo-preview"
+                                />
+                            ) : (
+                                <Avatar
+                                    size={140}
+                                    icon={<UserOutlined />}
+                                    className="student-photo-placeholder"
+                                />
+                            )}
+                            <Form.Item name="photo" className="photo-upload-btn">
+                                <Upload
+                                    accept="image/*"
+                                    maxCount={1}
+                                    showUploadList={false}
+                                    beforeUpload={() => false}
+                                    onChange={handlePhotoChange}
+                                >
+                                    <Button icon={<CameraOutlined />} type="dashed">
+                                        {photoPreview ? "Đổi ảnh" : "Tải ảnh lên"}
+                                    </Button>
+                                </Upload>
+                            </Form.Item>
+                        </div>
+                        <div className="photo-upload-hint">
+                            <Text type="secondary">
+                                Ảnh chân dung 3x4 của sinh viên
+                            </Text>
+                            <Text type="secondary" style={{ fontSize: 12 }}>
+                                Định dạng: JPG, PNG. Tối đa 2MB
+                            </Text>
+                        </div>
+                    </div>
+
+                    <Divider />
+
                     <Row gutter={24}>
                         <Col xs={24} md={12}>
                             <Form.Item
