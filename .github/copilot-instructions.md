@@ -30,7 +30,7 @@ App (ConfigProvider with Ant Design theme)
 ### State Management Patterns
 - Pages use local `useState` hooks (no global state library)
 - Example: [DiplomaListPage.jsx](src/pages/DiplomaListPage.jsx) manages `searchText` locally
-- Mock data in [src/mock/mockData.js](src/mock/mockData.js) includes `STATUS` enum (PENDING, APPROVED, ISSUED, REVOKED)
+- Mock data in [src/data/Data.js](src/data/Data.js) includes `STATUS` enum (PENDING, APPROVED, ISSUED, REVOKED)
 
 ### UI Framework: Ant Design 6.2
 - Configured in [App.jsx](src/app/App.jsx) with:
@@ -72,7 +72,7 @@ npm run preview   # Preview built app
 | Change layout/navigation | [src/layouts/MainLayout.jsx](src/layouts/MainLayout.jsx) - modify `menuItems` array |
 | Update theme/colors | [src/app/App.jsx](src/app/App.jsx) - `ConfigProvider` theme object |
 | Add styles | Create `.css` files in `src/styles/` and import in component |
-| Mock data | [src/mock/mockData.js](src/mock/mockData.js) |
+| Mock data | [src/data/Data.js](src/data/Data.js) |
 
 ## Code Conventions
 
@@ -86,9 +86,9 @@ npm run preview   # Preview built app
 - CSS class names: kebab-case (e.g., `.page-container`, `.search-card`)
 
 ### Status Handling
-Always use the STATUS enum from [src/mock/mockData.js](src/mock/mockData.js):
+Always use the STATUS enum from [src/data/Data.js](src/data/Data.js):
 ```javascript
-import { STATUS } from "../mock/mockData";
+import { STATUS } from "../data/Data";
 const isApproved = diploma.status === STATUS.APPROVED;
 ```
 
@@ -105,7 +105,7 @@ const isApproved = diploma.status === STATUS.APPROVED;
 - Look for API calls to blockchain service endpoint
 
 ### Backend API (Not yet integrated)
-- Pages currently use mock data from [mockData.js](src/mock/mockData.js)
+- Pages currently use mock data from [Data.js](src/data/Data.js)
 - Replace mock data fetching with actual API calls (endpoint TBD)
 - Likely endpoints: `/api/diplomas`, `/api/approve`, `/api/issue`, `/api/verify`
 

@@ -2,7 +2,7 @@ import React from "react";
 import { Form, Input, Button, Card, Checkbox, Typography, Space, message, Table, Tag } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { mockUsers } from "../mock/mockData";
+import { mockUsers } from "../data/Data";
 import "../styles/login.css";
 
 const { Title, Text } = Typography;

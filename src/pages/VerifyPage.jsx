@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Card, Input, Typography, Space, Divider, Empty, Spin, Tag, Avatar } from "antd";
 import { SearchOutlined, SafetyCertificateOutlined, CheckCircleOutlined, CloseCircleOutlined, UserOutlined } from "@ant-design/icons";
-import { mockDiplomas, STATUS } from "../mock/mockData";
+import { mockDiplomas, STATUS } from "../data/Data";
 import "../styles/pages.css";
 
 const { Title, Text, Paragraph } = Typography;
