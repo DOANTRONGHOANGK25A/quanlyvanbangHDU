@@ -204,6 +204,7 @@ export function AdminUsersPage() {
                                 { value: "admin", label: "Quản trị viên" },
                                 { value: "staff", label: "Nhân viên" },
                                 { value: "approver", label: "Người duyệt" },
+                                { value: "principal", label: "Hiệu trưởng" }
                             ]}
                         />
                     </Form.Item>
