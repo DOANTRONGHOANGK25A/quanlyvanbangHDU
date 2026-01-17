@@ -23,6 +23,10 @@ export function IssuancePage() {
         message.success(`Đã phát hành văn bằng ${record.serialNo} lên blockchain`);
     };
 
+    const handleReject = (record) => {
+        message.error(`Đã từ chối văn bằng ${record.serialNo}`);
+    };
+
     const handleRevoke = (record) => {
         message.warning(`Đã thu hồi văn bằng ${record.serialNo}`);
     };
@@ -123,7 +127,7 @@ export function IssuancePage() {
         },
         {
             title: "Hành động",
-            width: 180,
+            width: 220,
             align: "center",
             render: (_, record) => (
                 <Space>
@@ -140,6 +144,18 @@ export function IssuancePage() {
                         <Button type="primary" icon={<RocketOutlined />}>
                             Phát hành
                         </Button>
+                    </Popconfirm>
+                    <Popconfirm
+                        title="Xác nhận từ chối"
+                        description="Bạn có chắc muốn từ chối văn bằng này?"
+                        onConfirm={() => handleReject(record)}
+                        okText="Từ chối"
+                        cancelText="Hủy"
+                        okButtonProps={{ danger: true }}
+                    >
+                        <Tooltip title="Từ chối">
+                            <Button danger icon={<CloseCircleOutlined />} />
+                        </Tooltip>
                     </Popconfirm>
                 </Space>
             ),
